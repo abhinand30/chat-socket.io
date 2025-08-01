@@ -21,17 +21,18 @@ socketIO.on("connection", (socket) => {
     users[data] = socket.id;
     socket.data = data;
     socketIO.emit("newUserResponse", users);
-    socket.emit("newRoomResponse", rooms);
+    socketIO.emit("newRoomResponse", rooms);
   });
-
+  // getuser List
   socket.on("getUsers", () => {
     socket.emit("newUserResponse", users);
   });
+   // get room List
   socket.on("getRooms", () => {
     socket.emit("newRoomResponse", rooms);
   });
   // Room
-  socket.on("joinRoom", (roomId,userName) => {
+  socket.on("joinRoom", (roomId, userName) => {
     socket.join(roomId);
     if (!rooms[roomId]) {
       rooms[roomId] = [];
@@ -44,8 +45,10 @@ socketIO.on("connection", (socket) => {
     });
   });
 
-  socket.on("groupMessage", ({ sender,roomId, message }) => {
-    socket.to(roomId).emit("roomMessage", { sender, message,  senderSocketID: socket.id, });
+  socket.on("groupMessage", ({ sender, roomId, message }) => {
+    socket
+      .to(roomId)
+      .emit("roomMessage", { sender, message, senderSocketID: socket.id });
   });
 
   socket.on("privateMessage", ({ sender, receiverSocketId, message }) => {
@@ -57,15 +60,15 @@ socketIO.on("connection", (socket) => {
   });
 
   socket.on("disconnect", () => {
-    let userName=""
+    let userName = "";
     for (const userId in users) {
       if (users[userId] === socket.id) {
-        userName=userId
+        userName = userId;
         delete users[userId];
         break;
       }
     }
-
+    // removing user from groups connected
     for (const roomId in rooms) {
       rooms[roomId] = rooms[roomId].filter((id) => id !== socket.id);
       if (rooms[roomId].length === 0) {

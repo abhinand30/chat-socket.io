@@ -13,10 +13,12 @@ type SidebarProps = {
   setActiveUser: React.Dispatch<React.SetStateAction<UserType | null>>;
   rooms: any;
   setActiveRoom: React.Dispatch<React.SetStateAction<string | null>>;
-  activeRoom:string|null;
+  activeRoom: string | null;
+  setUpdate:React.Dispatch<React.SetStateAction<boolean>>
+  update:boolean
 };
 
-const Sidebar: React.FC<SidebarProps> = ({ socket, users, activeUser, setActiveUser, rooms, setActiveRoom,activeRoom }) => {
+const Sidebar: React.FC<SidebarProps> = ({ socket, users, activeUser, setActiveUser, rooms, setActiveRoom, activeRoom,setUpdate,update }) => {
   const userName = sessionStorage.getItem('userName');
   const [showModal, setShowModal] = useState(false);
   const [roomsId, setRoomsId] = useState<string>('');
@@ -29,7 +31,8 @@ const Sidebar: React.FC<SidebarProps> = ({ socket, users, activeUser, setActiveU
     e.preventDefault()
     socket.emit('joinRoom', roomsId);
     setShowModal(false);
-    setRoomsId('')
+    setRoomsId('');
+   setUpdate(!update);
   }
   const handleActiveUser = (userName: string) => {
     setActiveUser({ userName: userName, socketID: users[userName] });
@@ -41,7 +44,6 @@ const Sidebar: React.FC<SidebarProps> = ({ socket, users, activeUser, setActiveU
     setActiveUser(null)
   }
 
-
   return (
     <div className="p-4">
       <div className="mb-4">
@@ -50,14 +52,11 @@ const Sidebar: React.FC<SidebarProps> = ({ socket, users, activeUser, setActiveU
       </div>
       <ul className="space-y-2">
         <p className='text-gray-500'>Users</p>
-
         {Object.keys(users).filter(userName => users[userName] !== socket.id).map(userName => (
-          <li
-            key={userName}
+          <li key={userName}
             className={`p-3 rounded-lg cursor-pointer ${activeUser?.socketID === users[userName]
               ? 'bg-blue-500 text-white'
-              : 'bg-gray-100 hover:bg-gray-200'
-              }`}
+              : 'bg-gray-100 hover:bg-gray-200'}`}
             onClick={() => handleActiveUser(userName)}
           >
             {userName}
@@ -73,7 +72,7 @@ const Sidebar: React.FC<SidebarProps> = ({ socket, users, activeUser, setActiveU
         </div>
 
         <ul>{Object.keys(rooms).length > 0 && Object.keys(rooms).map((room, index) =>
-          <li key={index} className={`p-3 rounded-lg mt-2 ${room===activeRoom? 'bg-blue-500 text-white': 'bg-gray-100 hover:bg-gray-200'}`} onClick={() => handleActiveRoom(room)}>{room}</li>
+          <li key={index} className={`p-3 rounded-lg mt-2 ${room === activeRoom ? 'bg-blue-500 text-white' : 'bg-gray-100 hover:bg-gray-200'}`} onClick={() => handleActiveRoom(room)}>{room}</li>
         )}
 
         </ul>
