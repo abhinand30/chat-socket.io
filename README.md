@@ -15,8 +15,9 @@ real-time chat application built with **React**, **Node.js**, and **Socket.IO**.
     - Backend runs at http://localhost:4000
 
 - Install and Run the Frontend
-      - npm install
-      - npm run dev
+  - cd client
+  - npm install
+  - npm run dev
 
 ## 🛠 Tech Stack
 
